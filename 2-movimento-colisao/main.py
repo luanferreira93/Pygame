@@ -6,9 +6,9 @@ largura = 640
 
 altura = 480
 
-x = largura/2 - 32
+x = int(largura/2 - 32)
 
-y = altura/2 - 32
+y = int(altura/2 - 32)
 
 fonte = pygame.font.SysFont('ariel',40,True,True)
 
@@ -20,6 +20,11 @@ random_y = random.randint(50,400)
 tela = pygame.display.set_mode((largura,altura))
 
 pygame.display.set_caption('Joguinho')
+
+musica_de_fundo = pygame.mixer.music.load('./assets/sons/BoxCat.mp3')
+pygame.mixer.music.play(-1) # O -1 fica em loop
+
+son_colisao = pygame.mixer.Sound('./assets/sons/coin.wav')
 
 relogio = pygame.time.Clock()
 
@@ -47,6 +52,7 @@ while True:
     quadrado_vermelho = pygame.draw.rect(tela,(0,0,255),(x,y,40,40))
     
     if quadrado_vermelho.colliderect(quadrado_branco):
+        son_colisao.play()
         random_x = random.randint(50,600)
         random_y = random.randint(50,400)
         pontos = pontos + 1
