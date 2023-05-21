@@ -11,6 +11,12 @@ y_cobra = int(altura/2 - 32)
 x_moeda = random.randint(50,600)
 y_moeda = random.randint(50,400)
 
+velocidade_cobra = 6
+
+X_controle = velocidade_cobra
+y_controle = 0
+
+
 tela = pygame.display.set_mode((largura,altura))
 
 pygame.display.set_caption('Snake Game')
@@ -35,14 +41,23 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-    if pygame.key.get_pressed()[pygame.K_d]:
-        x_cobra += 8
-    if pygame.key.get_pressed()[pygame.K_a]:
-        x_cobra -= 8
-    if pygame.key.get_pressed()[pygame.K_w]:
-        y_cobra -= 8
-    if pygame.key.get_pressed()[pygame.K_s]:
-        y_cobra += 8
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_d:
+                X_controle = velocidade_cobra
+                y_controle = 0
+            if event.key == pygame.K_a:
+                X_controle = -velocidade_cobra
+                y_controle = 0
+            if event.key == pygame.K_w:
+                y_controle = -velocidade_cobra
+                X_controle = 0
+            if event.key == pygame.K_s:
+                y_controle = velocidade_cobra
+                X_controle = 0
+
+                
+    x_cobra = x_cobra + X_controle
+    y_cobra = y_cobra + y_controle
 
   
     tela.fill((0,0,0))
@@ -54,7 +69,7 @@ while True:
     lista_cabeca.append(x_cobra)
     lista_cabeca.append(y_cobra)
     lista_cobra.append(lista_cabeca)
-    
+
     if len(lista_cobra) > comprimento_inicial:
         del lista_cobra[0]
 
