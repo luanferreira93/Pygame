@@ -4,6 +4,9 @@ from sys import exit
 import os
 from random import randrange
 
+pygame.init()
+pygame.mixer.init()
+
 diretorio_principal = os.path.dirname(__file__)
 diretorio_imagens = os.path.join(diretorio_principal, 'imagens')
 diretorio_sons = os.path.join(diretorio_principal, 'sons')
@@ -30,12 +33,31 @@ class Dino(pygame.sprite.Sprite):
         self.image = self.imagens_dinossauro[self.index_lista]
         self.rect = self.image.get_rect()
         self.rect.center = (100, ALTURA - 64)
+        self.pulo = False
+        self.posicao_y_inicial = (ALTURA - 64 - 96 // 2)
+
+    def pular(self):
+        self.pulo = True   
+        pass
 
     def update(self):
         if self.index_lista > 2:
             self.index_lista = 0
-        self.index_lista += 0.15
+        self.index_lista += 0.25
         self.image = self.imagens_dinossauro[int(self.index_lista)]
+        
+        # lógica de pulo do dino
+        #Caso tenha apertado a tecla espaço
+        if self.pulo:
+            self.rect.y -=30
+            if self.rect.y <= 100:
+                self.pulo = False
+        else:
+            if self.rect.y < self.posicao_y_inicial:
+                self.rect.y += 20
+            else:
+                self.rect.y = self.posicao_y_inicial
+    
 
 class Nuvens(pygame.sprite.Sprite):
     def __init__(self):
@@ -83,12 +105,20 @@ for i in range(LARGURA//64+2):
 
 relogio = pygame.time.Clock()
 while True:
-    relogio.tick(60)
+    relogio.tick(30)
     tela.fill(BRANCO)
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                #Caso o dino ainda esta no ar
+                if dino.rect.y != dino.posicao_y_inicial:
+                    #O pass significa não faça nada
+                    pass
+                else:
+                    dino.pular()
 
     todas_as_sprites.draw(tela)
     todas_as_sprites.update()
