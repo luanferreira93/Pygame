@@ -31,7 +31,7 @@ class Sapo(pygame.sprite.Sprite):
         self.image = self.sprites[self.atual]
         self.image = pygame.transform.scale(self.image,(128*3,64*3))
         self.rect = self.image.get_rect()
-        self.rect.topleft = 100,100
+        self.rect.topleft = 100,200
         self.animar = False
     
     def update(self):
@@ -50,6 +50,9 @@ todas_as_sprites = pygame.sprite.Group()
 sapo = Sapo()
 todas_as_sprites.add(sapo)
 
+imagem_de_fundo = pygame.image.load('assets/img/city-game-background.jpg').convert()
+imagem_de_fundo = pygame.transform.scale(imagem_de_fundo,(640,480))
+
 relogio = pygame.time.Clock()
 
 
@@ -62,6 +65,8 @@ while True:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 sapo.atacar()
+
+    tela.blit(imagem_de_fundo,(0,0))
 
     todas_as_sprites.draw(tela)
     todas_as_sprites.update()
