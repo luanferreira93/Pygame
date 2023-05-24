@@ -22,6 +22,8 @@ sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'dinoSpriteshee
 class Dino(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
+        #som de pulo
+        self.som_pulo = pygame.mixer.Sound(os.path.join(diretorio_sons,'jump_sound.wav'))
         self.imagens_dinossauro = []
         #Pegando as sprites do Dino
         for i in range(3):
@@ -38,6 +40,7 @@ class Dino(pygame.sprite.Sprite):
 
     def pular(self):
         self.pulo = True   
+        self.som_pulo.play()
         pass
 
     def update(self):
@@ -102,6 +105,14 @@ for i in range(4):
 for i in range(LARGURA//64+2):
     chao = Chao(i)
     todas_as_sprites.add(chao)
+
+
+#Trocando o ícone da janela do jogo
+game_icon = dino.imagens_dinossauro[0]
+pygame.display.set_icon(game_icon)
+
+print(game_icon)
+
 
 relogio = pygame.time.Clock()
 while True:
