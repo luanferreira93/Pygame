@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from sys import exit
 import os
-from random import randrange
+from random import randrange,choice
 
 pygame.init()
 pygame.mixer.init()
@@ -127,14 +127,18 @@ class DinoVoador(pygame.sprite.Sprite):
         self.index_lista = 0
         self.image = self.imagens_dinossauro[self.index_lista]
         self.rect = self.image.get_rect()
-        self.rect.center = (LARGURA,ALTURA - 128 + 2)
+        self.rect.center = (LARGURA,300)
+        self.mask = pygame.mask.from_surface(self.image)
     
     def update(self):
         self.rect.x -= 15
         if self.rect.topright[0]  < 0:
             self.rect.x = LARGURA
-        pass
-
+        if self.index_lista > 1:
+                self.index_lista = 0
+        self.index_lista += 0.25
+        self.image = self.imagens_dinossauro[int(self.index_lista)]
+        
 todas_as_sprites = pygame.sprite.Group()
 dino = Dino()
 todas_as_sprites.add(dino)
@@ -147,15 +151,15 @@ for i in range(LARGURA//64+2):
     chao = Chao(i)
     todas_as_sprites.add(chao)
 
+grupo_obstaculos = pygame.sprite.Group()
+
 cacto = Cacto()
 todas_as_sprites.add(cacto)
-
-
-grupo_obstaculos = pygame.sprite.Group()
 grupo_obstaculos.add(cacto)
 
 dinovoador = DinoVoador()
 todas_as_sprites.add(dinovoador)
+grupo_obstaculos.add(dinovoador)
 
 #Trocando o ícone da janela do jogo
 game_icon = dino.imagens_dinossauro[0]
@@ -186,6 +190,7 @@ while True:
 
     #Pausando o jogo caso ocorra uma colisão
     if colisoes and colidiu == False:
+        print('Colidiu')
         dino.colisao()
         colidiu = True
     if colidiu:
