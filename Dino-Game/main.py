@@ -116,6 +116,24 @@ class Cacto(pygame.sprite.Sprite):
             self.rect.x = LARGURA
         self.rect.x -= 10
 
+class DinoVoador(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.imagens_dinossauro = []
+        for i in range(3,5):
+            img = sprite_sheet.subsurface((i*32,0), (32,32))
+            img = pygame.transform.scale(img,(32*3,33*3))
+            self.imagens_dinossauro.append(img)
+        self.index_lista = 0
+        self.image = self.imagens_dinossauro[self.index_lista]
+        self.rect = self.image.get_rect()
+        self.rect.center = (LARGURA,ALTURA - 128 + 2)
+    
+    def update(self):
+        self.rect.x -= 15
+        if self.rect.topright[0]  < 0:
+            self.rect.x = LARGURA
+        pass
 
 todas_as_sprites = pygame.sprite.Group()
 dino = Dino()
@@ -132,10 +150,12 @@ for i in range(LARGURA//64+2):
 cacto = Cacto()
 todas_as_sprites.add(cacto)
 
+
 grupo_obstaculos = pygame.sprite.Group()
 grupo_obstaculos.add(cacto)
 
-
+dinovoador = DinoVoador()
+todas_as_sprites.add(dinovoador)
 
 #Trocando o ícone da janela do jogo
 game_icon = dino.imagens_dinossauro[0]
