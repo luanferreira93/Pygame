@@ -19,6 +19,8 @@ tela = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption('Dino Game')
 sprite_sheet = pygame.image.load(os.path.join(diretorio_imagens, 'dinoSpritesheet.png')).convert_alpha()
 
+escolha_obstaculo = choice([0,1])
+
 class Dino(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -92,7 +94,6 @@ class Chao(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = ALTURA - 64 
         self.rect.x = pos_x * 64
-    
     def update(self):
         if self.rect.topright[0] < 0:
             self.rect.x = LARGURA
@@ -102,43 +103,50 @@ class Chao(pygame.sprite.Sprite):
 class Cacto(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = sprite_sheet.subsurface((5*32,0),(32,32))
-        self.image = pygame.transform.scale(self.image,(32*2,32*2))
+        self.image = sprite_sheet.subsurface((5*32, 0), (32,32))
+        self.image = pygame.transform.scale(self.image, (32*2, 32*2))
         self.rect = self.image.get_rect()
-        self.rect.x = 300
-        self.rect.center = (LARGURA, ALTURA - 64)
-        # Mascara de Colisão
         self.mask = pygame.mask.from_surface(self.image)
-    
-    def update(self):
+        self.escolha = escolha_obstaculo
+        self.rect.center = (LARGURA,  ALTURA - 64)
+        self.rect.x = LARGURA
 
-        if self.rect.topright[0] < 0:
-            self.rect.x = LARGURA
-        self.rect.x -= 10
+
+    def update(self):
+        if self.escolha == 0:
+            if self.rect.topright[0] < 0:
+                self.rect.x = LARGURA
+            self.rect.x -= 10
 
 class DinoVoador(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.imagens_dinossauro = []
         for i in range(3,5):
-            img = sprite_sheet.subsurface((i*32,0), (32,32))
-            img = pygame.transform.scale(img,(32*3,33*3))
+            img = sprite_sheet.subsurface((i*32, 0), (32,32))
+            img = pygame.transform.scale(img, (32*3, 32*3))
             self.imagens_dinossauro.append(img)
+
         self.index_lista = 0
         self.image = self.imagens_dinossauro[self.index_lista]
-        self.rect = self.image.get_rect()
-        self.rect.center = (LARGURA,300)
         self.mask = pygame.mask.from_surface(self.image)
+        self.escolha = escolha_obstaculo
+        self.rect = self.image.get_rect()
+        self.rect.center = (LARGURA, 300)
+        self.rect.x = LARGURA
     
     def update(self):
-        self.rect.x -= 15
-        if self.rect.topright[0]  < 0:
-            self.rect.x = LARGURA
-        if self.index_lista > 1:
+        if self.escolha == 1:
+            if self.rect.topright[0] < 0:
+                self.rect.x = LARGURA
+            self.rect.x -= 10
+
+            if self.index_lista > 1:
                 self.index_lista = 0
-        self.index_lista += 0.25
-        self.image = self.imagens_dinossauro[int(self.index_lista)]
-        
+            self.index_lista += 0.25
+            self.image = self.imagens_dinossauro[int(self.index_lista)]
+
+         
 todas_as_sprites = pygame.sprite.Group()
 dino = Dino()
 todas_as_sprites.add(dino)
@@ -157,9 +165,9 @@ cacto = Cacto()
 todas_as_sprites.add(cacto)
 grupo_obstaculos.add(cacto)
 
-dinovoador = DinoVoador()
-todas_as_sprites.add(dinovoador)
-grupo_obstaculos.add(dinovoador)
+dino_voador = DinoVoador()
+todas_as_sprites.add(dino_voador)
+grupo_obstaculos.add(dino_voador)
 
 #Trocando o ícone da janela do jogo
 game_icon = dino.imagens_dinossauro[0]
@@ -187,6 +195,14 @@ while True:
     colisoes = pygame.sprite.spritecollide(dino,grupo_obstaculos,False,pygame.sprite.collide_mask)
     
     todas_as_sprites.draw(tela)
+
+    #Obstáculos de forma aleatória
+    if cacto.rect.topright[0] <= 0 or dino_voador.rect.topright[0] <= 0:
+        escolha_obstaculo = choice([0, 1])
+        cacto.rect.x = LARGURA
+        dino_voador.rect.x = LARGURA
+        cacto.escolha = escolha_obstaculo
+        dino_voador.escolha = escolha_obstaculo
 
     #Pausando o jogo caso ocorra uma colisão
     if colisoes and colidiu == False:
